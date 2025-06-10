@@ -9,8 +9,10 @@
 - Send plain text messages
 - Customize username and avatar
 - Mention users or everyone/here
+- Use Text-to-speech
 - Upload files and images
 - Embed multiple images (up to 10)
+- Create and send polls
 
 ## 🚀 Usage
 
@@ -23,11 +25,12 @@ hook = SimpleHook("https://discord.com/api/webhooks/your_webhook_url")
 # Send a simple message
 hook.send_message("Hello, world!")
 
-# Send a message with a custom username and avatar
+# Send a message with a custom username,avatar and Text-to-speech
 hook.send_customized_message(
     message="I'm a bot!",
     username="CoolBot",
-    avatar_url="https://i.imgur.com/your_avatar.png"
+    avatar_url="https://i.imgur.com/your_avatar.png",
+    tts=True
 )
 
 # Mention a user by ID or everyone/here
@@ -39,7 +42,17 @@ hook.send_file("example.txt")
 
 # Send embedded images (max 10)
 hook.send_embedded_images(["img1.png", "img2.jpg"], message="Check these out!")
+
+# Create and send a poll
+hook.create_poll(
+    question="What's your favorite color?",
+    answers=["Blue", "Red", "Green"],
+    emojis=["🔵", "🔴", "🟢"],
+    duration=48,
+    allow_multiselect=True
+)
 ```
+
 ## 📦 Installation
 
 ```bash
