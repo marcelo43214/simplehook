@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="SimpleHook",
+    name="simplehook",
     version="1.0.0",
     description="Simple Discord webhook wrapper",
     author="jstiin",
