@@ -1,13 +1,14 @@
 import json
-import requests
+import httpx
 import os
 from typing import Optional
+from aiofiles import open
 
 
-class SimpleHook:
+class SimpleHookAsync:
 
     """
-    A minimalistic class to send messages, files, and images using Discord Webhooks.
+    A minimalistic asynchronous class to send messages, files, and images using Discord Webhooks.
     """
 
     webhook_url: str
@@ -22,11 +23,11 @@ class SimpleHook:
 
         self.webhook_url = webhook_url
 
-    def __post(self, **kwargs) -> None:
-        r = requests.post(url=self.webhook_url, **kwargs)
-        r.raise_for_status()
+    async def __post(self, **kwargs) -> None:
+        async with httpx.AsyncClient() as client:
+            await client.post(url=self.webhook_url, **kwargs)
 
-    def send_message(self, message: str) -> None:
+    async def send_message(self, message: str) -> None:
         """
         Send a basic text message to the Discord webhook.
 
@@ -38,9 +39,9 @@ class SimpleHook:
             "content": message
         }
 
-        self.__post(json=body)
+        await self.__post(json=body)
 
-    def send_customized_message(
+    async def send_customized_message(
         self,
         message: str,
         username: Optional[str] = None,
@@ -55,7 +56,7 @@ class SimpleHook:
             message (str): The message content.
             username (Optional[str]): A custom username to display instead of the webhook default.
             avatar_url (Optional[str]): A URL to a custom avatar image.
-            mention (Optional[str]): The ID of the user to mention in the message.
+            mention (Optional[str]): The ID or tag to mention (e.g., a user ID, "everyone", or "here").
             tts (Optional[bool]): If True, the message will be read aloud using text-to-speech.
         """
 
@@ -74,13 +75,13 @@ class SimpleHook:
 
             if mention == "everyone" or mention == "here":
                 body['content'] = f"@{mention} {message}"
-        
+
         if tts:
             body["tts"] = tts
 
-        self.__post(json=body)
+        await self.__post(json=body)
 
-    def send_file(self, image_path: str) -> None:
+    async def send_file(self, image_path: str) -> None:
         """
         Send a single file via the Discord webhook.
 
@@ -88,17 +89,17 @@ class SimpleHook:
             image_path (str): The local path to the file.
         """
 
-        with open(image_path, "rb") as f:
-            file = f.read()
+        async with open(image_path, "rb") as f:
+            file = await f.read()
             filename = os.path.basename(image_path)
 
         file_body: dict = {
             "file": (filename, file)
         }
 
-        self.__post(files=file_body)
+        await self.__post(files=file_body)
 
-    def send_embedded_images(self, paths: list[str], message: Optional[str] = None) -> None:
+    async def send_embedded_images(self, paths: list[str], message: Optional[str] = None) -> None:
         """
         Send multiple files as embedded content in a Discord message.
 
@@ -117,8 +118,8 @@ class SimpleHook:
         files: list = []
 
         for index, path in enumerate(paths):
-            with open(path, "rb") as f:
-                file = f.read()
+            async with open(path, "rb") as f:
+                file = await f.read()
                 filename = os.path.basename(path)
                 files.append((f"files[{index}]", (filename, file)))
                 embeds.append({
@@ -130,9 +131,9 @@ class SimpleHook:
             "embeds": embeds
         }
 
-        self.__post(data={"payload_json": json.dumps(payload)}, files=files)
+        await self.__post(data={"payload_json": json.dumps(payload)}, files=files)
 
-    def create_poll(
+    async def create_poll(
         self,
         question: str,
         answers: list,
@@ -199,4 +200,4 @@ class SimpleHook:
                 raise ValueError(
                     "Length of emojis must match length of answers")
 
-        self.__post(json=body)
+        await self.__post(json=body)
