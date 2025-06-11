@@ -54,7 +54,7 @@ hook.send_embedded_files(paths=["img1.png", "img2.jpg"], message="Check these ou
 hook.send_embedded_message(title="Hello!", color=321)
 
 # Send embedded author message
-hook.send_embedded_author(name="Paul", avatar_url="https://i.imgur.com/your_avatar.png", description="How are you?😊")
+hook.send_embedded_author(name="Paul", avatar_url="https://i.imgur.com/your_avatar.png")
 
 # Send embedded URL with a custom title
 hook.send_embedded_url(title="Google!", url="https://www.google.com")
