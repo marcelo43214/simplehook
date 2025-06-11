@@ -17,7 +17,7 @@
 ## 🚀 Usage
 
 ```python
-from simplehook import SimpleHook
+from simplehook import SimpleHook # from simplehook import SimpleHookAsync
 
 # Initialize with your webhook URL
 hook = SimpleHook("https://discord.com/api/webhooks/your_webhook_url")
