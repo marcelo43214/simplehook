@@ -7,7 +7,7 @@ with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="simplehook",
-    version="1.3.0",
+    version="1.3.1",
     description="Simple Discord webhook wrapper",
     long_description=long_description,  
     long_description_content_type="text/markdown", 
