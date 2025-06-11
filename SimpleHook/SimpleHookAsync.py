@@ -254,18 +254,18 @@ class SimpleHookAsync:
 
         await self.__post(json=body)
 
-    async def send_embedded_author(self, name: str, icon_url: str, url: Optional[str] = None,  description: Optional[str] = None, color: Optional[int] = None) -> None:
+    async def send_embedded_author(self, name: str, avatar_url: str, url: Optional[str] = None,  description: Optional[str] = None, color: Optional[int] = None) -> None:
         """Send an embedded author message.
 
         Args:
             name (str): Name of the author.
             url (str): URL for the hyperlink.
-            icon_url (str): Image URL for the author icon.
+            avatar_url (str): Image URL for the author's avatar.
             description (Optional[str], optional): Description content of the message. Defaults to None.
             color (Optional[int], optional): Decimal integer color value between 0 and 65280. Defaults to None.
         """
 
-        author = {"name": name, "icon_url": icon_url}
+        author = {"name": name, "icon_url": avatar_url}
         body = {
             "embeds": []
         }
