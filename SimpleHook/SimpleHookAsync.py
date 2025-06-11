@@ -24,8 +24,36 @@ class SimpleHookAsync:
         self.webhook_url = webhook_url
 
     async def __post(self, **kwargs) -> None:
+        """
+        Helper method to send a POST request.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments passed to the underlying HTTP request (e.g., json, headers).
+
+        Raises:
+            HTTPError: If the HTTP request returns an unsuccessful status code.
+        """
+
         async with httpx.AsyncClient() as client:
             await client.post(url=self.webhook_url, **kwargs)
+
+    def __validate(self, color: int) -> int:
+        """
+        Validate the color value to ensure it is within the allowed range.
+
+        Args:
+            color (int): The color value to validate. Must be between 0 and 65280 inclusive.
+
+        Returns:
+            int: The validated color value if it is within the valid range.
+
+        Raises:
+            ValueError: If the color value is outside the range 0 to 65280.
+        """
+        if color < 0 or color > 65280:
+            raise ValueError("Value of color must be between 0 and 65280!")
+        else:
+            return color
 
     async def send_message(self, message: str) -> None:
         """
@@ -56,7 +84,7 @@ class SimpleHookAsync:
             message (str): The message content.
             username (Optional[str]): A custom username to display instead of the webhook default.
             avatar_url (Optional[str]): A URL to a custom avatar image.
-            mention (Optional[str]): The ID or tag to mention (e.g., a user ID, "everyone", or "here").
+            mention (Optional[str]): The ID of the user to mention in the message.
             tts (Optional[bool]): If True, the message will be read aloud using text-to-speech.
         """
 
@@ -81,17 +109,17 @@ class SimpleHookAsync:
 
         await self.__post(json=body)
 
-    async def send_file(self, image_path: str) -> None:
+    async def send_file(self, file_path: str) -> None:
         """
         Send a single file via the Discord webhook.
 
         Args:
-            image_path (str): The local path to the file.
+            file_path (str): The local path to the file.
         """
 
-        async with open(image_path, "rb") as f:
+        async with open(file_path, "rb") as f:
             file = await f.read()
-            filename = os.path.basename(image_path)
+            filename = os.path.basename(file_path)
 
         file_body: dict = {
             "file": (filename, file)
@@ -99,13 +127,14 @@ class SimpleHookAsync:
 
         await self.__post(files=file_body)
 
-    async def send_embedded_images(self, paths: list[str], message: Optional[str] = None) -> None:
+    async def send_embedded_files(self, paths: list[str], message: Optional[str] = None, color: Optional[int] = None) -> None:
         """
         Send multiple files as embedded content in a Discord message.
 
         Args:
             paths (list[str]): List of local file paths to send (maximum 10 files).
             message (Optional[str]): Optional text content to include with the embeds.
+            color (Optional[int], optional): Decimal integer color value between 0 and 65280. Defaults to None.
 
         Raises:
             ValueError: If more than 10 files are provided.
@@ -125,6 +154,9 @@ class SimpleHookAsync:
                 embeds.append({
                     "image": {"url": f"attachment://"+filename}
                 })
+            if color is not None:
+                color = self.__validate(color)
+                embeds[index]["color"] = color
 
         payload = {
             "content": message or "",
@@ -199,5 +231,96 @@ class SimpleHookAsync:
             else:
                 raise ValueError(
                     "Length of emojis must match length of answers")
+
+        await self.__post(json=body)
+
+    async def send_embedded_message(self, title: str, color: Optional[int] = None) -> None:
+        """Send an embedded message.
+
+        Args:
+            title (str): Content of the embed.
+            color (Optional[int], optional): Decimal integer color value between 0 and 65280. Defaults to None.
+        """
+
+        body = {
+            "embeds": []
+        }
+
+        body["embeds"].append({"title": title})
+
+        if color is not None:
+            color = self.__validate(color)
+            body["embeds"][0]["color"] = color
+
+        await self.__post(json=body)
+
+    async def send_embedded_author(self, name: str, icon_url: str, url: Optional[str] = None,  description: Optional[str] = None, color: Optional[int] = None) -> None:
+        """Send an embedded author message.
+
+        Args:
+            name (str): Name of the author.
+            url (str): URL for the hyperlink.
+            icon_url (str): Image URL for the author icon.
+            description (Optional[str], optional): Description content of the message. Defaults to None.
+            color (Optional[int], optional): Decimal integer color value between 0 and 65280. Defaults to None.
+        """
+
+        author = {"name": name, "icon_url": icon_url}
+        body = {
+            "embeds": []
+        }
+        body["embeds"].append({"author": author})
+
+        if url is not None:
+            body["embeds"][0]["author"]["url"] = url
+
+        if description is not None:
+            body["embeds"][0]["description"] = description
+
+        if color is not None:
+            color = self.__validate(color)
+            body["embeds"][0]["color"] = color
+
+        await self.__post(json=body)
+
+    async def send_embedded_url(self, title: str, url: str, color: Optional[int] = None) -> None:
+        """Send an embedded message with a hyperlink.
+
+        Args:
+            title (str): Content of the embed.
+            url (str): URL for the hyperlink.
+            color (Optional[int], optional): Decimal integer color value between 0 and 65280. Defaults to None.
+        """
+
+        body = {
+            "embeds": []
+        }
+
+        body["embeds"].append({"title": title, "url": url})
+
+        if color is not None:
+            color = self.__validate(color)
+            body["embeds"][0]["color"] = color
+
+        await self.__post(json=body)
+
+    async def send_embedded_url_image(self, url: str,message: Optional[str] = None, color: Optional[int] = None) -> None:
+        """Send an embedded image via URL.
+
+        Args:
+            url (str): URL of the image.
+            color (Optional[int], optional): Decimal integer color value between 0 and 65280. Defaults to None.
+        """
+
+        body = {
+            "embeds": [],
+            "content": message or ""
+        }
+
+        body["embeds"].append({"image": {"url": url}})
+
+        if color is not None:
+            color = self.__validate(color)
+            body["embeds"][0]["color"] = color
 
         await self.__post(json=body)
