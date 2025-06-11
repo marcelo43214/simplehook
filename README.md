@@ -2,7 +2,7 @@
 
 **SimpleHook** is a minimalistic Python wrapper for Discord webhooks. It allows you to easily send messages, files, and embedded content to a Discord channel using just a few lines of code.
 
-![PyPI](https://img.shields.io/pypi/v/simplehook) ![Python](https://img.shields.io/pypi/pyversions/simplehook) ![License](https://img.shields.io/github/license/jstiin/simplehook) ![Size](https://img.shields.io/badge/size-21%20KiB-6e40c9?style=flat)
+![PyPI](https://img.shields.io/pypi/v/simplehook) ![Python](https://img.shields.io/pypi/pyversions/simplehook) ![License](https://img.shields.io/badge/license-MIT-3b3b3b?style=flat) ![Size](https://img.shields.io/badge/size-21%20KiB-6e40c9?style=flat)
 
 ## 🔧 Features
 
