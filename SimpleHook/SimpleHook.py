@@ -1,8 +1,7 @@
 import json
-import requests
 import os
 from typing import Optional
-
+import httpx
 
 class SimpleHook:
 
@@ -33,8 +32,9 @@ class SimpleHook:
             HTTPError: If the HTTP request returns an unsuccessful status code.
         """
 
-        r = requests.post(url=self.webhook_url, **kwargs)
-        r.raise_for_status()
+        with httpx.Client() as client:
+            c = client.post(url=self.webhook_url, **kwargs)
+            c.raise_for_status()
 
     def __validate(self, color: int) -> int:
         """
