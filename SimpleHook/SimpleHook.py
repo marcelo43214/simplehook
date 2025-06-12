@@ -21,7 +21,7 @@ class SimpleHook:
 
         self.webhook_url = webhook_url
 
-    def __post(self, **kwargs) -> None:
+    def post(self, **kwargs) -> None:
         """
         Helper method to send a POST request.
 
@@ -36,7 +36,7 @@ class SimpleHook:
             c = client.post(url=self.webhook_url, **kwargs)
             c.raise_for_status()
 
-    def __validate(self, color: int) -> int:
+    def validate(self, color: int) -> int:
         """
         Validate the color value to ensure it is within the allowed range.
 
@@ -66,7 +66,7 @@ class SimpleHook:
             "content": message
         }
 
-        self.__post(json=body)
+        self.post(json=body)
 
     def send_customized_message(
         self,
@@ -106,7 +106,7 @@ class SimpleHook:
         if tts:
             body["tts"] = tts
 
-        self.__post(json=body)
+        self.post(json=body)
 
     def send_file(self, file_path: str) -> None:
         """
@@ -124,7 +124,7 @@ class SimpleHook:
             "file": (filename, file)
         }
 
-        self.__post(files=file_body)
+        self.post(files=file_body)
 
     def send_embedded_files(self, paths: list[str], message: Optional[str] = None, color: Optional[int] = None) -> None:
         """
@@ -154,7 +154,7 @@ class SimpleHook:
                     "image": {"url": f"attachment://"+filename}
                 })
             if color is not None:
-                color = self.__validate(color)
+                color = self.validate(color)
                 embeds[index]["color"] = color
 
         payload = {
@@ -162,7 +162,7 @@ class SimpleHook:
             "embeds": embeds
         }
 
-        self.__post(data={"payload_json": json.dumps(payload)}, files=files)
+        self.post(data={"payload_json": json.dumps(payload)}, files=files)
 
     def create_poll(
         self,
@@ -231,7 +231,7 @@ class SimpleHook:
                 raise ValueError(
                     "Length of emojis must match length of answers")
 
-        self.__post(json=body)
+        self.post(json=body)
 
     def send_embedded_message(self, title: str, color: Optional[int] = None) -> None:
         """Send an embedded message.
@@ -248,10 +248,10 @@ class SimpleHook:
         body["embeds"].append({"title": title})
 
         if color is not None:
-            color = self.__validate(color)
+            color = self.validate(color)
             body["embeds"][0]["color"] = color
 
-        self.__post(json=body)
+        self.post(json=body)
 
     def send_embedded_author(self, name: str, avatar_url: str, url: Optional[str] = None,  description: Optional[str] = None, color: Optional[int] = None) -> None:
         """Send an embedded author message.
@@ -277,10 +277,10 @@ class SimpleHook:
             body["embeds"][0]["description"] = description
 
         if color is not None:
-            color = self.__validate(color)
+            color = self.validate(color)
             body["embeds"][0]["color"] = color
 
-        self.__post(json=body)
+        self.post(json=body)
 
     def send_embedded_url(self, title: str, url: str, color: Optional[int] = None) -> None:
         """Send an embedded message with a hyperlink.
@@ -298,10 +298,10 @@ class SimpleHook:
         body["embeds"].append({"title": title, "url": url})
 
         if color is not None:
-            color = self.__validate(color)
+            color = self.validate(color)
             body["embeds"][0]["color"] = color
 
-        self.__post(json=body)
+        self.post(json=body)
 
     def send_embedded_url_image(self, url: str, message: Optional[str] = None, color: Optional[int] = None) -> None:
         """Send an embedded image via URL.
@@ -319,10 +319,10 @@ class SimpleHook:
         body["embeds"].append({"image": {"url": url}})
 
         if color is not None:
-            color = self.__validate(color)
+            color = self.validate(color)
             body["embeds"][0]["color"] = color
 
-        self.__post(json=body)
+        self.post(json=body)
 
     def send_embedded_field(self, names: list[str], values: list[str], inline: list[bool], color: Optional[int] = None) -> None:
         """
@@ -358,7 +358,7 @@ class SimpleHook:
             raise ValueError("Lengths of all lists must match!")
 
         if color is not None:
-            color = self.__validate(color)
+            color = self.validate(color)
             body["embeds"][0]["color"] = color
 
-        self.__post(json=body)
+        self.post(json=body)
