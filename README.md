@@ -2,7 +2,7 @@
 
 **SimpleHook** is a minimalistic Python wrapper for Discord webhooks. It allows you to easily send messages, files, and embedded content to a Discord channel using just a few lines of code.
 
-![PyPI](https://img.shields.io/pypi/v/simplehook) ![Python](https://img.shields.io/pypi/pyversions/simplehook) ![License](https://img.shields.io/github/license/jstiin/simplehook)
+![PyPI](https://img.shields.io/pypi/v/simplehook) ![Python](https://img.shields.io/pypi/pyversions/simplehook) ![License](https://img.shields.io/badge/license-MIT-3b3b3b?style=flat) ![Size](https://img.shields.io/badge/size-21%20KiB-6e40c9?style=flat)
 
 ## 🔧 Features
 
@@ -54,7 +54,7 @@ hook.send_embedded_files(paths=["img1.png", "img2.jpg"], message="Check these ou
 hook.send_embedded_message(title="Hello!", color=321)
 
 # Send embedded author message
-hook.send_embedded_author(name="Paul", avatar_url="https://i.imgur.com/your_avatar.png", description="How are you?😊")
+hook.send_embedded_author(name="Paul", avatar_url="https://i.imgur.com/your_avatar.png")
 
 # Send embedded URL with a custom title
 hook.send_embedded_url(title="Google!", url="https://www.google.com")
