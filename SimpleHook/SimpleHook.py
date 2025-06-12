@@ -303,7 +303,7 @@ class SimpleHook:
 
         self.__post(json=body)
 
-    def send_embedded_url_image(self, url: str,message: Optional[str] = None, color: Optional[int] = None) -> None:
+    def send_embedded_url_image(self, url: str, message: Optional[str] = None, color: Optional[int] = None) -> None:
         """Send an embedded image via URL.
 
         Args:
@@ -317,6 +317,45 @@ class SimpleHook:
         }
 
         body["embeds"].append({"image": {"url": url}})
+
+        if color is not None:
+            color = self.__validate(color)
+            body["embeds"][0]["color"] = color
+
+        self.__post(json=body)
+
+    def send_embedded_field(self, names: list[str], values: list[str], inline: list[bool], color: Optional[int] = None) -> None:
+        """
+        Sends an embed message with multiple fields.
+
+        Args:
+            names (list[str]): List of field names (titles) for the embed.
+            values (list[str]): List of field values corresponding to each name.
+            inline (list[bool]): List indicating if each field should be displayed inline.
+            color (Optional[int], optional): Decimal integer color value between 0 and 65280. Defaults to None.
+
+        Raises:
+            ValueError: If the lengths of the `names`, `values`, and `inline` lists do not match.
+            ValueError: If any of the lists are empty.
+        """
+
+        body = {
+            "embeds": [{
+                "fields": [],
+                "color": None
+            }]
+        }
+
+        if len(names) == len(values) == len(inline):
+            if names:
+                for i, name in enumerate(names):
+                    body["embeds"][0]["fields"].append(
+                        {"name": name, "value": values[i], "inline": inline[i]})
+            else:
+                raise ValueError(
+                    "Lists must contain at least one element each!")
+        else:
+            raise ValueError("Lengths of all lists must match!")
 
         if color is not None:
             color = self.__validate(color)
