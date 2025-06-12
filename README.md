@@ -63,7 +63,7 @@ hook.send_embedded_url(title="Google!", url="https://www.google.com")
 hook.send_embedded_url_image(url="https://i.imgur.com/your_image.png")
 
 # Send embed message with multiple fields
-hook.send_embedded_field(names=["Username", "Score", "Level"], values=["Player 1", "1500", "5"], inline=[True, True, False])
+hook.send_embedded_field(names=["Username", "Score"], values=["Player1", "150"], inline=[True, True])
 ```
 ### Poll function
 ```python
