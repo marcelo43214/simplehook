@@ -19,11 +19,11 @@ def test_is_invalid(num):
 
 def test_send_message(mocker):
     mocker_post = mocker.patch.object(hook, "post")
-    message = "test"
-    hook.send_message(message=message)
+
+    hook.send_message(message="Test")
 
     mocker_post.assert_called_once_with(
-        json={"content": message})
+        json={"content": "Test"})
 
 
 def test_post(mocker):
@@ -54,17 +54,28 @@ def test_send_customized_message_full(mocker):
     message = "test"
     username = "test"
     avatar_url = "test"
-    mention = "everyone"
+    mention = "here"
     tts = True
+
+    expected_body: dict[str, str | bool] = {
+        "content": "",
+        "username": username,
+        "avatar_url": avatar_url,
+    }
 
     hook.send_customized_message(
         message=message, username=username, avatar_url=avatar_url, mention=mention, tts=tts)
-    if mention is "everyone" or mention is "here":
-        mocker_post.assert_called_once_with(
-            json={"content": f"@{mention} {message}", "username": username, "avatar_url": avatar_url, "tts": tts})
+
+    if mention == "everyone" or mention == "here":
+        expected_body["content"] = f"@{mention} {message}"
+
     else:
-        mocker_post.assert_called_once_with(
-            json={"content": f"<@{mention}> {message}", "username": username, "avatar_url": avatar_url, "tts": tts})
+        expected_body["content"] = f"<@{mention}> {message}"
+
+    if tts:
+        expected_body["tts"] = tts
+
+    mocker_post.assert_called_once_with(json=expected_body)
 
 
 def test_send_customized_message_empty_message(mocker):
@@ -123,16 +134,67 @@ def test_send_embedded_files_empty(mocker):
         hook.send_embedded_files(paths=[""])
 
     mocker_post.assert_not_called()
-    
+
+
 def test_send_embedded_files_color_error(mocker):
     file = mock_open(read_data="Data")
     with patch("builtins.open", file):
         mocker_post = mocker.patch.object(hook, "post")
-        
+
         with pytest.raises(expected_exception=ValueError, match="Value of color must be between 0 and 65280!"):
             hook.send_embedded_files(paths=["path.png"], color=-1)
-        
+
         mocker_post.assert_not_called()
 
-def test_create_poll(mocker):
-    pass
+
+@pytest.mark.parametrize("num", [1, 352, 768, 42])
+def test_create_poll_full(mocker, num):
+    mock_post = mocker.patch.object(hook, "post")
+    allow_multiselect = True
+
+    hook.create_poll(question="Test", answers=["Test"], emojis=[
+                     "😊"], allow_multiselect=allow_multiselect, duration=num)
+
+    expected_body = {
+        "poll": {
+            "question": {
+                "text": "Test"
+            },
+            "answers":
+                [{
+                    "poll_media": {
+                        "text": "Test",
+                        "emoji": {
+                            "name": "😊"
+                        }
+                    },
+                }
+            ],
+            "duration": num
+        }
+    }
+
+    if allow_multiselect:
+        expected_body["poll"]["allow_multiselect"] = True
+
+    mock_post.assert_called_once_with(json=expected_body)
+
+
+@pytest.mark.parametrize("num", [0, -1, 769, 1000, 99999, -142])
+def test_create_poll_duration_error(mocker, num):
+    mock_post = mocker.patch.object(hook, "post")
+
+    with pytest.raises(expected_exception=ValueError, match="Duration must be between 1 and 768"):
+        hook.create_poll(question="test", answers=["test"], duration=num)
+
+    mock_post.assert_not_called()
+
+
+def test_create_poll_len_error(mocker):
+    mocker_post = mocker.patch.object(hook, "post")
+
+    with pytest.raises(expected_exception=ValueError, match="Length of emojis must match length of answers"):
+        hook.create_poll(question="test", answers=[
+                         "test", "test"], emojis=["😊"])
+
+    mocker_post.assert_not_called()
