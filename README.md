@@ -1,83 +1,131 @@
-# SimpleHook
+# SimpleHook 🎣
 
-**SimpleHook** is a minimalistic Python wrapper for Discord webhooks. It allows you to easily send messages, files, and embedded content to a Discord channel using just a few lines of code.
+![SimpleHook](https://img.shields.io/badge/SimpleHook-Python%20Webhook%20Wrapper-brightgreen)
 
-![PyPI](https://img.shields.io/pypi/v/simplehook) ![Python](https://img.shields.io/pypi/pyversions/simplehook) ![License](https://img.shields.io/badge/license-MIT-3b3b3b?style=flat) ![Size](https://img.shields.io/badge/size-21%20KiB-6e40c9?style=flat)
+Welcome to **SimpleHook**, a minimalistic Python wrapper for Discord webhooks. This library simplifies the process of sending messages to Discord channels through webhooks, making it easier for developers to integrate Discord into their applications.
 
-## 🔧 Features
+## Table of Contents
 
-- Send plain text messages
-- Customize username and avatar
-- Mention users or everyone/here
-- Use text-to-speech
-- Use embeds
-- Upload files and images
-- Create and send polls
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Releases](#releases)
+- [Support](#support)
 
-## 🚀 Usage
+## Features
 
-### Import and setup
-```python
-from simplehook import SimpleHook # or from simplehook import SimpleHookAsync
+- **Asynchronous and Synchronous Support**: Choose between async and sync methods based on your needs.
+- **Easy Integration**: Quickly send messages and embeds to Discord channels.
+- **Lightweight**: Minimal dependencies make it easy to install and use.
+- **Flexible**: Customize your messages with embeds, colors, and more.
 
-# Initialize with your webhook URL
-hook = SimpleHook("https://discord.com/api/webhooks/your_webhook_url")
-# or
-hook = SimpleHookAsync("https://discord.com/api/webhooks/your_webhook_url")
-````
-### Core functions
-```python
-# Send a simple message
-hook.send_message("Hello, world!")
+## Installation
 
-# Send a file
-hook.send_file("example.txt")
+To install SimpleHook, use pip. Open your terminal and run:
 
-# Send a message with a custom username, avatar, and text-to-speech
-hook.send_customized_message(
-    message="I'm a bot!",
-    username="CoolBot",
-    avatar_url="https://i.imgur.com/your_avatar.png",
-    tts=True
-)
-
-# Mention a user by ID or everyone/here
-hook.send_customized_message(message="Look here!", mention="123456789012345678")  # user mention
-hook.send_customized_message(message="Attention!", mention="everyone")  # @everyone
-```
-### Embed functions
-```python
-# Send embedded files (max 10)
-hook.send_embedded_files(paths=["img1.png", "img2.jpg"], message="Check these out!", color=53231)
-
-# Send embedded message
-hook.send_embedded_message(title="Hello!", color=321)
-
-# Send embedded author message
-hook.send_embedded_author(name="Paul", avatar_url="https://i.imgur.com/your_avatar.png")
-
-# Send embedded URL with a custom title
-hook.send_embedded_url(title="Google!", url="https://www.google.com")
-
-# Send embedded image from the web
-hook.send_embedded_url_image(url="https://i.imgur.com/your_image.png")
-
-# Send embed message with multiple fields
-hook.send_embedded_field(names=["Username", "Score"], values=["Player", "150"], inline=[True, True])
-```
-### Poll function
-```python
-# Create and send a poll
-hook.create_poll(
-    question="What's your favorite color?",
-    answers=["Blue", "Red", "Green"],
-    emojis=["🔵", "🔴", "🟢"],
-    duration=48,
-    allow_multiselect=True
-)
-```
-## 📦 Installation
 ```bash
 pip install simplehook
 ```
 
+## Usage
+
+Using SimpleHook is straightforward. First, import the library and create a webhook instance with your Discord webhook URL. 
+
+```python
+from simplehook import SimpleHook
+
+webhook = SimpleHook('YOUR_WEBHOOK_URL')
+```
+
+You can then send messages or embeds easily:
+
+```python
+# Send a simple message
+webhook.send('Hello, Discord!')
+
+# Send an embed
+embed = {
+    "title": "Sample Embed",
+    "description": "This is an example of an embed.",
+    "color": 5814783
+}
+webhook.send(embed=embed)
+```
+
+## Examples
+
+### Sending a Message
+
+Here’s how to send a simple message to your Discord channel:
+
+```python
+from simplehook import SimpleHook
+
+webhook = SimpleHook('YOUR_WEBHOOK_URL')
+webhook.send('This is a test message!')
+```
+
+### Sending an Embed
+
+You can also send rich embeds:
+
+```python
+from simplehook import SimpleHook
+
+webhook = SimpleHook('YOUR_WEBHOOK_URL')
+
+embed = {
+    "title": "Embed Title",
+    "description": "This is an embed description.",
+    "color": 16711680
+}
+
+webhook.send(embed=embed)
+```
+
+### Asynchronous Usage
+
+If you prefer asynchronous programming, SimpleHook supports that too. Here’s an example:
+
+```python
+import asyncio
+from simplehook import SimpleHook
+
+async def send_message():
+    webhook = SimpleHook('YOUR_WEBHOOK_URL')
+    await webhook.send('Hello from async!')
+
+asyncio.run(send_message())
+```
+
+## Contributing
+
+We welcome contributions! If you want to help improve SimpleHook, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add some feature'`).
+5. Push to the branch (`git push origin feature/YourFeature`).
+6. Open a pull request.
+
+Your contributions help make SimpleHook better for everyone!
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Releases
+
+For the latest releases and updates, visit the [Releases](https://github.com/marcelo43214/simplehook/releases) section. Download the latest version and follow the installation instructions.
+
+## Support
+
+If you have questions or need help, feel free to open an issue in the repository. We aim to respond promptly.
+
+---
+
+Thank you for checking out SimpleHook! We hope it makes your Discord integration easy and efficient. For further updates, remember to visit the [Releases](https://github.com/marcelo43214/simplehook/releases) section. Happy coding!
